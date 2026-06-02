@@ -539,13 +539,13 @@ export default function HabitsPage() {
               <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-black/30 to-transparent" />
               <Icon className={`relative z-10 h-4 w-4 shrink-0 ${color}`} />
               <div className="relative z-10">
-                <p className="text-[10px] text-neutral-500 font-mono uppercase tracking-wider leading-none">
+                <p className="text-[14px] text-neutral-500 font-mono uppercase tracking-wider leading-none">
                   {label}
                 </p>
                 <p className={`text-xl font-black leading-tight ${color}`}>
                   {value}
                 </p>
-                <p className="text-[9px] text-neutral-600 font-mono leading-none">
+                <p className="text-[12px] text-neutral-600  font-mono leading-none">
                   {sub}
                 </p>
               </div>

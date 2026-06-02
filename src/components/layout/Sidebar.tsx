@@ -93,69 +93,63 @@ export default function Sidebar() {
       </nav>
 
       {/* ── BOTTOM PANEL ── */}
-      <div className="border-t border-white/[0.04] p-4 space-y-3">
-        {/* Notification row */}
-        <button className="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-neutral-400 hover:text-white hover:bg-white/[0.03] transition-all duration-200 group">
-          <Bell className="h-4 w-4 shrink-0 group-hover:scale-105 transition-transform" />
-          <span className="text-sm font-semibold tracking-wide flex-1 text-left">
-            Notifications
-          </span>
-          <span className="text-[10px] font-mono bg-orange-500/15 text-orange-400 border border-orange-500/20 px-1.5 py-0.5 rounded-full">
-            0
-          </span>
-        </button>
+      {/* ── BOTTOM PANEL ── */}
+      <div className="border-t border-white/[0.04] p-3 space-y-2">
+        {/* Compact toolbar: notifications + theme toggle */}
+        <div className="flex items-center gap-1.5">
+          {/* Notification button */}
+          <button
+            title="Notifications"
+            className="relative h-[30px] w-[30px] flex-shrink-0 flex items-center justify-center rounded-lg text-neutral-600 hover:text-neutral-300 hover:bg-white/[0.03] transition-all duration-200"
+          >
+            <Bell className="h-[15px] w-[15px]" />
+            {/* Show badge only when count > 0 */}
+            {/* <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-orange-500 border-[1.5px] border-[#0a0806]" /> */}
+          </button>
 
-        {/* Theme toggle */}
-        <div className="space-y-1.5">
-          <p className="text-[10px] font-mono text-neutral-600 uppercase tracking-widest px-1">
-            Appearance
-          </p>
-          <div className="grid grid-cols-3 gap-1 bg-black/30 p-1 rounded-xl border border-white/[0.04]">
-            {THEME_OPTIONS.map(({ value, icon: Icon, label }) => {
-              const isActive = theme === value;
-              return (
-                <button
-                  key={value}
-                  onClick={() => setTheme(value)}
-                  title={label}
-                  className={`flex flex-col items-center gap-1 py-1.5 rounded-lg text-[10px] font-semibold transition-all duration-200 ${
-                    isActive
-                      ? "bg-gradient-to-r from-orange-600 to-amber-500 text-white shadow-md"
-                      : "text-neutral-500 hover:text-neutral-300 hover:bg-white/[0.03]"
-                  }`}
-                >
-                  <Icon className="h-3.5 w-3.5" />
-                  {label}
-                </button>
-              );
-            })}
+          {/* Theme toggle pill */}
+          <div className="flex flex-1 items-center bg-black/30 border border-white/[0.04] rounded-lg p-0.5 h-[30px]">
+            {THEME_OPTIONS.map(({ value, icon: Icon }) => (
+              <button
+                key={value}
+                onClick={() => setTheme(value)}
+                title={value.charAt(0).toUpperCase() + value.slice(1)}
+                className={`flex flex-1 items-center justify-center h-full rounded-md transition-all duration-200 ${
+                  theme === value
+                    ? "bg-gradient-to-r from-orange-600 to-amber-500 text-white"
+                    : "text-neutral-600 hover:text-neutral-300 hover:bg-white/[0.03]"
+                }`}
+              >
+                <Icon className="h-3.5 w-3.5" />
+              </button>
+            ))}
           </div>
         </div>
 
         {/* User card */}
-        <div className="flex items-center gap-2.5 rounded-xl bg-white/[0.02] border border-white/[0.04] px-3 py-2.5">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-md shadow-orange-500/20 shrink-0">
-            <User className="h-4 w-4 text-white" />
+        <div className="flex items-center gap-2 rounded-lg bg-white/[0.02] border border-white/[0.04] px-2.5 py-1.5">
+          <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shrink-0">
+            <User className="h-3.5 w-3.5 text-white" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-bold text-white leading-none truncate">
+            <p className="text-[11px] font-bold text-white leading-none truncate">
               {user?.name ?? "User"}
             </p>
-            <p className="text-[10px] text-neutral-500 font-mono mt-0.5 leading-none truncate">
+            <p className="text-[9px] text-neutral-500 font-mono mt-0.5 leading-none truncate">
               {user?.email ?? ""}
             </p>
           </div>
           <button
             onClick={handleLogout}
             title="Log out"
-            className="h-7 w-7 flex items-center justify-center rounded-lg text-neutral-500 hover:text-red-400 hover:bg-red-500/[0.08] transition-all duration-200 shrink-0"
+            className="h-6 w-6 flex items-center justify-center rounded-md text-neutral-500 hover:text-red-400 hover:bg-red-500/[0.08] transition-all duration-200 shrink-0"
           >
             <LogOut className="h-3.5 w-3.5" />
           </button>
         </div>
 
-        <p className="text-[10px] font-mono text-neutral-700 text-center pt-0.5">
-          v2.4.0 • Built with ❤️
+        <p className="text-[9px] font-mono text-neutral-700 text-center">
+          v2.4.0 · Built with ❤️
         </p>
       </div>
     </aside>
