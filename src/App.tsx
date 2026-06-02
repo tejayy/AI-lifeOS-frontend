@@ -9,11 +9,12 @@ import AppLayout from "./layouts/AppLayout";
 import ProfilePage from "./pages/profile/ProfilePage";
 import { useAuth } from "./hooks/useAuth";
 import DashboardPage from "./pages/dashboard/DashboardPage";
+import { ThemeProvider } from "./components/ThemeProvider";
 
 const App = () => {
   useAuth();
   return (
-    <>
+    <ThemeProvider>
       <Toaster position="top-right" reverseOrder={false} />
       <BrowserRouter>
         <Routes>
@@ -32,7 +33,7 @@ const App = () => {
           </Route>
         </Routes>
       </BrowserRouter>
-    </>
+    </ThemeProvider>
   );
 };
 
