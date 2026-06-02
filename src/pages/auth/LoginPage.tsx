@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import type React from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,6 +14,9 @@ import {
   CheckCircle2,
   Award,
 } from "lucide-react";
+import { toast } from "react-hot-toast";
+import { authService } from "@/services/auth.service";
+import { useAuthStore } from "@/store/auth.store";
 
 const BG_HABITS = [
   {
@@ -50,11 +55,26 @@ export default function CleanHabitLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const setUser = useAuthStore((s) => s.setUser);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 2000);
+    try {
+      const data = await authService.login({ email, password });
+      if (data.user) {
+        setUser({ ...data.user, role: "USER" });
+        toast.success("Welcome back!");
+        navigate("/dashboard");
+      }
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ?? "Login failed. Please try again.";
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

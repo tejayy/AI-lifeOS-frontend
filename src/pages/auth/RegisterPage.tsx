@@ -1,4 +1,6 @@
 import { useState } from "react";
+import type React from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,6 +19,9 @@ import {
   ArrowRight,
   Compass,
 } from "lucide-react";
+import { toast } from "react-hot-toast";
+import { authService } from "@/services/auth.service";
+import { useAuthStore } from "@/store/auth.store";
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -29,11 +34,52 @@ export default function RegisterPage() {
     password: "",
     confirmPassword: "",
   });
+  const navigate = useNavigate();
+  const setUser = useAuthStore((s) => s.setUser);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (formData.password !== formData.confirmPassword) {
+      toast.error("Passwords do not match.");
+      return;
+    }
+
+    if (formData.password.length < 8) {
+      toast.error("Password must be at least 8 characters.");
+      return;
+    }
+
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
+      toast.error("Password must contain uppercase, lowercase, and a number.");
+      return;
+    }
+
+    if (formData.fullName.length < 3) {
+      toast.error("Name must be at least 3 characters.");
+      return;
+    }
+
     setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 2000);
+    try {
+      const data = await authService.register({
+        name: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+      });
+      if (data.user) {
+        setUser({ ...data.user, role: "USER" });
+        toast.success("Account created! Welcome to LifeOS.");
+        navigate("/dashboard");
+      }
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ??
+        "Registration failed. Please try again.";
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -390,6 +436,9 @@ export default function RegisterPage() {
                   )}
                 </button>
               </div>
+              <p className="text-[10px] text-neutral-600 pl-1">
+                Min 8 chars · uppercase · lowercase · number
+              </p>
             </div>
 
             {/* Field: Confirm Password */}
