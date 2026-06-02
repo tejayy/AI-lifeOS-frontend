@@ -9,13 +9,13 @@ import AppLayout from "./layouts/AppLayout";
 import ProfilePage from "./pages/profile/ProfilePage";
 import { useAuth } from "./hooks/useAuth";
 import DashboardPage from "./pages/dashboard/DashboardPage";
-import HabitsPage from "./pages/habits/HabitsPage";
 import TasksPage from "./pages/tasks/TasksPage";
 import NotesPage from "./pages/notes/NotesPage";
 import MoodPage from "./pages/mood/MoodPage";
 import AnalyticsPage from "./pages/analytics/AnalyticsPage";
 import SettingsPage from "./pages/settings/SettingsPage";
 import { ThemeProvider } from "./components/ThemeProvider";
+import HabitsPage from "./features/habits/pages/HabitPage";
 
 const App = () => {
   useAuth();
