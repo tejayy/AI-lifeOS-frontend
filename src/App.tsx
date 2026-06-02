@@ -21,7 +21,7 @@ const App = () => {
   useAuth();
   return (
     <ThemeProvider>
-      <Toaster position="top-right" reverseOrder={false} />
+      <Toaster position="top-center" reverseOrder={false} />
       <BrowserRouter>
         <Routes>
           {/* Public Routes */}
