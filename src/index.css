@@ -262,3 +262,20 @@ code {
     @apply font-sans;
   }
 }
+
+/* ── AppLoader progress bar animation ── */
+@keyframes loader-bar {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-loader-bar {
+  animation: loader-bar 1.6s ease-in-out infinite;
+}

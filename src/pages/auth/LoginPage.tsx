@@ -17,6 +17,7 @@ import toast from "react-hot-toast";
 import { authService } from "@/services/auth.service";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/auth.store";
+import AppLoader from "@/components/AppLoader";
 
 const BG_HABITS = [
   {
@@ -57,30 +58,30 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const setUser = useAuthStore((state) => state.setUser);
+  const loginLoading = useAuthStore((state) => state.loginLoading);
+  const setLoginLoading = useAuthStore((state) => state.setLoginLoading);
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
 
-    //Zod Validation
     const validated = loginSchema.safeParse({ email, password });
-
     if (!validated.success) {
       toast.error(validated.error.issues[0].message);
       return;
     }
 
     setIsLoading(true);
-
     try {
-      const data = await authService.login({
-        email,
-        password,
-      });
-
+      const data = await authService.login({ email, password });
       if (data.user) {
         setUser({ ...data.user, role: "USER" });
         toast.success(`Welcome back`);
-        navigate("/dashboard");
+        // Show branded loader for 1.5s before navigating
+        setLoginLoading(true);
+        setTimeout(() => {
+          setLoginLoading(false);
+          navigate("/dashboard");
+        }, 1500);
       }
     } catch (error) {
       const message =
@@ -90,6 +91,8 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
+
+  if (loginLoading) return <AppLoader />;
 
   return (
     // Fixed viewport container to absolutely deny any page scrolling

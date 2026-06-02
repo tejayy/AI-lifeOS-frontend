@@ -22,6 +22,7 @@ import { registerSchema } from "@/validations/auth.validation";
 import { authService } from "@/services/auth.service";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/auth.store";
+import AppLoader from "@/components/AppLoader";
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -36,20 +37,19 @@ export default function RegisterPage() {
   });
   const navigate = useNavigate();
   const setUser = useAuthStore((state) => state.setUser);
+  const loginLoading = useAuthStore((state) => state.loginLoading);
+  const setLoginLoading = useAuthStore((state) => state.setLoginLoading);
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
 
-    // zod VALIDATIONS
     const result = registerSchema.safeParse(formData);
-
     if (!result.success) {
       toast.error(result.error.issues[0].message);
       return;
     }
 
     setIsLoading(true);
-
     try {
       const data = await authService.register({
         name: formData.fullName,
@@ -58,12 +58,13 @@ export default function RegisterPage() {
       });
 
       if (data.user) {
-        setUser({
-          ...data.user,
-          role: "USER",
-        });
+        setUser({ ...data.user, role: "USER" });
         toast.success("Account Created! Welcome to LifeOS");
-        navigate("/dashboard");
+        setLoginLoading(true);
+        setTimeout(() => {
+          setLoginLoading(false);
+          navigate("/dashboard");
+        }, 1500);
       }
     } catch (error) {
       const message =
@@ -78,6 +79,8 @@ export default function RegisterPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  if (loginLoading) return <AppLoader />;
 
   return (
     // Viewport lock to completely guarantee zero scrolling
