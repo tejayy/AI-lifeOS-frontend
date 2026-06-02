@@ -10,8 +10,11 @@ export const useAuth = () => {
     const loadUser = async () => {
       try {
         const res = await authService.profile();
-        console.log("PROFILE RESPONSE:", res.data);
-        setUser(res.data.user);
+        if (res.user) {
+          setUser({ ...res.user, role: "USER" });
+        } else {
+          setUser(null);
+        }
       } catch (error) {
         setUser(null);
       } finally {

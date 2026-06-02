@@ -12,6 +12,11 @@ import {
   CheckCircle2,
   Award,
 } from "lucide-react";
+import { loginSchema } from "@/validations/auth.validation";
+import toast from "react-hot-toast";
+import { authService } from "@/services/auth.service";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/store/auth.store";
 
 const BG_HABITS = [
   {
@@ -46,15 +51,44 @@ const REWARDS = [
   },
 ];
 
-export default function CleanHabitLoginPage() {
+export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const setUser = useAuthStore((state) => state.setUser);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
+
+    //Zod Validation
+    const validated = loginSchema.safeParse({ email, password });
+
+    if (!validated.success) {
+      toast.error(validated.error.issues[0].message);
+      return;
+    }
+
     setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 2000);
+
+    try {
+      const data = await authService.login({
+        email,
+        password,
+      });
+
+      if (data.user) {
+        setUser({ ...data.user, role: "USER" });
+        toast.success(`Welcome back`);
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      const message =
+        error?.response?.data?.message ?? "Login failed. Please try again.";
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

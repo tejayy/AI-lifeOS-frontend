@@ -17,6 +17,11 @@ import {
   ArrowRight,
   Compass,
 } from "lucide-react";
+import toast from "react-hot-toast";
+import { registerSchema } from "@/validations/auth.validation";
+import { authService } from "@/services/auth.service";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/store/auth.store";
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -29,11 +34,45 @@ export default function RegisterPage() {
     password: "",
     confirmPassword: "",
   });
+  const navigate = useNavigate();
+  const setUser = useAuthStore((state) => state.setUser);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
+
+    // zod VALIDATIONS
+    const result = registerSchema.safeParse(formData);
+
+    if (!result.success) {
+      toast.error(result.error.issues[0].message);
+      return;
+    }
+
     setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 2000);
+
+    try {
+      const data = await authService.register({
+        name: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (data.user) {
+        setUser({
+          ...data.user,
+          role: "USER",
+        });
+        toast.success("Account Created! Welcome to LifeOS");
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      const message =
+        error?.response?.data?.message ??
+        "Registration failed. Please try again.";
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -390,6 +429,9 @@ export default function RegisterPage() {
                   )}
                 </button>
               </div>
+              <p className="text-[10px] text-neutral-600 pl-1">
+                Min 8 chars · uppercase · lowercase · number
+              </p>
             </div>
 
             {/* Field: Confirm Password */}
